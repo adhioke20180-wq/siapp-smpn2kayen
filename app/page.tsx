@@ -57,21 +57,25 @@ export default function Home() {
     }
   }, []);
 
-  // Simpan Otomatis
+ // Simpan Otomatis ke Cloud Database (Neon)
   useEffect(() => {
-    if (isLoaded) localStorage.setItem('siapps_students', JSON.stringify(students));
+    if (isLoaded && students.length > 0) {
+      fetch('/api/students', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(students),
+      }).catch((err) => console.error('Gagal simpan siswa:', err));
+    }
   }, [students, isLoaded]);
 
   useEffect(() => {
-    if (isLoaded) localStorage.setItem('siapps_teachers', JSON.stringify(teachers));
-  }, [teachers, isLoaded]);
-
-  useEffect(() => {
-    if (isLoaded) localStorage.setItem('siapps_vtypes', JSON.stringify(violationTypes));
-  }, [violationTypes, isLoaded]);
-
-  useEffect(() => {
-    if (isLoaded) localStorage.setItem('siapps_violations', JSON.stringify(violations));
+    if (isLoaded && violations.length > 0) {
+      fetch('/api/violations', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(violations),
+      }).catch((err) => console.error('Gagal simpan pelanggaran:', err));
+    }
   }, [violations, isLoaded]);
 
   // Rekap Kelas
