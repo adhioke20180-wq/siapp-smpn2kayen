@@ -25,56 +25,20 @@ export default function Home() {
   const [pasteText, setPasteText] = useState('');
   const [singleForm, setSingleForm] = useState<any>({});
 
-  // Load Data awal
+  // Load Data awal dari Database Neon
   useEffect(() => {
-    try {
-      const savedStudents = localStorage.getItem('siapps_students');
-      if (savedStudents) setStudents(JSON.parse(savedStudents));
-
-      const savedTeachers = localStorage.getItem('siapps_teachers');
-      if (savedTeachers) {
-        const parsedT = JSON.parse(savedTeachers);
-        setTeachers(parsedT);
-        if (parsedT.length > 0) setSelectedTeacher(parsedT[0].name);
-      }
-
-      const savedVTypes = localStorage.getItem('siapps_vtypes');
-      if (savedVTypes) {
-        setViolationTypes(JSON.parse(savedVTypes));
-      } else {
-        setViolationTypes([
-          { id: '1', name: 'Terlambat Masuk Sekolah', points: 5 },
-          { id: '2', name: 'Tidak Mengerjakan Tugas', points: 10 }
-        ]);
-      }
-
-      const savedViolations = localStorage.getItem('siapps_violations');
-      if (savedViolations) setViolations(JSON.parse(savedViolations));
-    } catch (error) {
-      console.error("Gagal memuat data:", error);
-    } finally {
-      setIsLoaded(true);
-    }
+    fetch('/api/student')
+      .then((res) => res.json())
+      .then((result) => {
+        if (result.data) {
+          setStudents(result.data);
+        }
+      })
+      .catch((err) => console.error('Gagal ambil data:', err));
   }, []);
-
-  // Simpan Otomatis
-  useEffect(() => {
-    if (isLoaded) localStorage.setItem('siapps_students', JSON.stringify(students));
-  }, [students, isLoaded]);
-
-  useEffect(() => {
-    if (isLoaded) localStorage.setItem('siapps_teachers', JSON.stringify(teachers));
-  }, [teachers, isLoaded]);
-
-  useEffect(() => {
-    if (isLoaded) localStorage.setItem('siapps_vtypes', JSON.stringify(violationTypes));
-  }, [violationTypes, isLoaded]);
-
-  useEffect(() => {
-    if (isLoaded) localStorage.setItem('siapps_violations', JSON.stringify(violations));
-  }, [violations, isLoaded]);
-
-  // Rekap Kelas
+  
+     
+      
   const uniqueClasses = Array.from(new Set(students.map(s => s.class).filter(Boolean)));
 
   // Buka Modal Pelanggaran
