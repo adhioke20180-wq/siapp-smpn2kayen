@@ -62,7 +62,7 @@ export default function Home() {
  // Simpan Otomatis ke Cloud Database (Neon)
   useEffect(() => {
     if (isLoaded && students.length > 0) {
-      fetch('/api/students', {
+      fetch('/api/student', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(students),
