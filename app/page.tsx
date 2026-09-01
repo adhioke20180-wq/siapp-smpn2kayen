@@ -25,36 +25,38 @@ export default function Home() {
   const [pasteText, setPasteText] = useState('');
   const [singleForm, setSingleForm] = useState<any>({});
 
-  // Load Data awal
+  // Load Data awal dari Cloud Database (Neon)
   useEffect(() => {
-    try {
-      const savedStudents = localStorage.getItem('siapps_students');
-      if (savedStudents) setStudents(JSON.parse(savedStudents));
-
-      const savedTeachers = localStorage.getItem('siapps_teachers');
-      if (savedTeachers) {
-        const parsedT = JSON.parse(savedTeachers);
-        setTeachers(parsedT);
-        if (parsedT.length > 0) setSelectedTeacher(parsedT[0].name);
-      }
-
-      const savedVTypes = localStorage.getItem('siapps_vtypes');
-      if (savedVTypes) {
-        setViolationTypes(JSON.parse(savedVTypes));
-      } else {
-        setViolationTypes([
-          { id: '1', name: 'Terlambat Masuk Sekolah', points: 5 },
-          { id: '2', name: 'Tidak Mengerjakan Tugas', points: 10 }
+    async function loadData() {
+      try {
+        const [resS, resT, resV] = await Promise.all([
+          fetch('/api/students'),
+          fetch('/api/teachers'),
+          fetch('/api/violations')
         ]);
-      }
 
-      const savedViolations = localStorage.getItem('siapps_violations');
-      if (savedViolations) setViolations(JSON.parse(savedViolations));
-    } catch (error) {
-      console.error("Gagal memuat data:", error);
-    } finally {
-      setIsLoaded(true);
+        if (resS.ok) {
+          const dataS = await resS.json();
+          if (Array.isArray(dataS) && dataS.length > 0) setStudents(dataS);
+        }
+        if (resT.ok) {
+          const dataT = await resT.json();
+          if (Array.isArray(dataT) && dataT.length > 0) {
+            setTeachers(dataT);
+            setSelectedTeacher(dataT[0].name);
+          }
+        }
+        if (resV.ok) {
+          const dataV = await resV.json();
+          if (Array.isArray(dataV) && dataV.length > 0) setViolations(dataV);
+        }
+      } catch (err) {
+        console.error('Gagal memuat data dari cloud:', err);
+      } finally {
+        setIsLoaded(true);
+      }
     }
+    loadData();
   }, []);
 
  // Simpan Otomatis ke Cloud Database (Neon)
