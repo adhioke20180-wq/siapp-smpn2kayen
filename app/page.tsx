@@ -77,15 +77,7 @@ export default function Home() {
       }).catch((err) => console.error('Gagal simpan pelanggaran:', err));
     }
   }, [violations, isLoaded]);
-  useEffect(() => {
-    if (isLoaded && violations.length > 0) {
-      fetch('/api/violations', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(violations),
-      }).catch((err) => console.error('Gagal simpan pelanggaran:', err));
-    }
-  }, [violations, isLoaded]);
+  
 
   // Rekap Kelas
   const uniqueClasses = Array.from(new Set(students.map(s => s.class).filter(Boolean)));
