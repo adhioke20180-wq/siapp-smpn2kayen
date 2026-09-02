@@ -57,6 +57,7 @@ export default function Home() {
   }, []);
 
   // 2. Simpan Otomatis Siswa ke Cloud
+  // 1. Simpan Otomatis Siswa ke Cloud
   useEffect(() => {
     if (isLoaded && students.length > 0) {
       fetch('/api/student', {
@@ -67,7 +68,7 @@ export default function Home() {
     }
   }, [students, isLoaded]);
 
-  // 3. Simpan Otomatis Pelanggaran ke Cloud
+  // 2. Simpan Otomatis Pelanggaran ke Cloud
   useEffect(() => {
     if (isLoaded && violations.length > 0) {
       fetch('/api/violations', {
@@ -77,6 +78,17 @@ export default function Home() {
       }).catch((err) => console.error('Gagal simpan pelanggaran:', err));
     }
   }, [violations, isLoaded]);
+
+  // 3. Simpan Otomatis Jenis Pelanggaran ke Cloud
+  useEffect(() => {
+    if (isLoaded && violationTypes.length > 0) {
+      fetch('/api/vtypes', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(violationTypes),
+      }).catch((err) => console.error('Gagal simpan jenis pelanggaran:', err));
+    }
+  }, [violationTypes, isLoaded]);
   
 
   // Rekap Kelas
