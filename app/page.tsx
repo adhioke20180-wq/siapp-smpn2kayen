@@ -22,15 +22,12 @@ export default function Home() {
 
   // State Modal Input Excel & Form
   const [activeModal, setActiveModal] = useState<string | null>(null);
-  const [pasteText, setPasteText] = useState('');
-  const [singleForm, setSingleForm] = useState<any>({});
-
-  // Load Data awal dari Cloud Database (Neon)
+  // 1. Load Data awal dari Cloud Database (Neon)
   useEffect(() => {
     async function loadData() {
       try {
         const [resS, resT, resV] = await Promise.all([
-          fetch('/api/students'),
+          fetch('/api/student'), // SUDAH DIPERBAIKI (tanpa huruf 's')
           fetch('/api/teachers'),
           fetch('/api/violations')
         ]);
@@ -59,7 +56,7 @@ export default function Home() {
     loadData();
   }, []);
 
- // Simpan Otomatis ke Cloud Database (Neon)
+  // 2. Simpan Otomatis Siswa ke Cloud
   useEffect(() => {
     if (isLoaded && students.length > 0) {
       fetch('/api/student', {
@@ -70,6 +67,16 @@ export default function Home() {
     }
   }, [students, isLoaded]);
 
+  // 3. Simpan Otomatis Pelanggaran ke Cloud
+  useEffect(() => {
+    if (isLoaded && violations.length > 0) {
+      fetch('/api/violations', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(violations),
+      }).catch((err) => console.error('Gagal simpan pelanggaran:', err));
+    }
+  }, [violations, isLoaded]);
   useEffect(() => {
     if (isLoaded && violations.length > 0) {
       fetch('/api/violations', {
